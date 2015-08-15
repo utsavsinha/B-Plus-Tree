@@ -1,0 +1,96 @@
+
+This assignment is made by Utsav Sinha, 12775
+
+A B-plus tree is a multi-level index which stores data in leaf nodes and indexes the data in a
+heirarchical manner into internal nodes. It overcomes the drawback of performance degradation which
+is faced by index-sequential file organization as file size grows.
+
+It is like a binary tree but a node can have many children instead of just 2 children. The number of children (pointers in a node) is called the fanout.
+
+As fanout increases, the height of the tree decreases and search becomes faster since less number of
+nodes need to be visited before accessing data from the leaf nodes.
+The fanout is so adjusted so that each leaf node is of the size of a disk block. So B-plus trees are
+mainly used for database indexing where read/writes to the filesystem are the bottleneck for computation resourses.
+
+With MAX_NUM_KEYS (from bplustree.config ) = 32, the statistics are:
+
+---------------------- MAX_NUM_KEYS = 32 ---------------------------------------------------
+
+All time in units of milli-seconds (ms)
+
+Building B-Plus tree:
+
+Total time: 	63242 ms
+Number of Queries: 	100000 (insertions)
+Average Time per query: 	0.63242 ms
+Minimum Time of any query: 	0 ms
+Maximum Time of any query: 	572 ms
+Standard Deviation: 	4.99239 ms
+
+
+Statistics for query on querysample.txt:
+
+											INSERTION 		POINT_QUERY 	RANGE_QUERY
+Total time: 								521 ms 			165 ms  		546 ms
+Number of Queries: 							1000 			1000 			1000
+Average Time per query: 					0.521 ms 		0.165 ms 		0.546 ms
+Minimum Time of any query: 					0 ms 			0 ms 			0 ms
+Maximum Time of any query: 					2 ms            1 ms            2 ms
+Standard Deviation: 						0.517 ms 		0.371 ms 		0.565 ms
+Number of successful found keys: 			-      			449				102543
+Average Time to find a row: 				-				0.367 ms 		0.005 ms
+
+The number of successful found keys provide important insights for range queries since the results
+returned can have 0 to 100000 rows. So range queries returning more rows should take considerably
+more time since it has to read several disk blocks to find all these records. 
+
+So total number of records found have also been calculated and average time to find a record is also computed.
+
+We can see that how B-Plus tree is very efficient for range queries since each leaf also stores
+pointers to its neighbouring node which helps in sequential access of data in a given range of keys.
+
+Theoritical time complexities are:
+Insertion 	-	O(h)
+Point query -	O(h)
+
+where h is the height of the tree. h = O(logN) with base of log as MAX_NUM_KEYS/2. N is the number of data entries in the entire tree.
+
+
+Cause of high standard deviation:
+Time taken for range query depends on the range as said earlier, so the total time of different range queries are not comparable.
+
+The least count (1ms) is in the order of most of the results (between 0 to 2 ms) and thus would lead to decrease in accuracy of results.
+
+The statistics gathered also has influences from the workings of the Operating System. Execution
+time varies with the availability of computing resources, so similar runs on the same data might
+give different performances based on CPU scheduling.
+
+---------------------- MAX_NUM_KEYS = 128 ---------------------------------------------------
+
+Building B-Plus tree:
+
+Total time: 	249093 ms
+Number of Queries: 	100000 (insertions)
+Average Time per query: 	2.49093 ms
+Minimum Time of any query: 	0 ms
+Maximum Time of any query: 	428 ms
+Standard Deviation: 	8.16757 ms
+
+
+Statistics for query on querysample.txt:
+
+											INSERTION 		POINT_QUERY 	RANGE_QUERY
+Total time: 								1203 ms 		287 ms  		675 ms
+Number of Queries: 							1000 			1000 			1000
+Average Time per query: 					1.203 ms 		0.287 ms 		0.675 ms
+Minimum Time of any query: 					0 ms 			0 ms 			0 ms
+Maximum Time of any query: 					6 ms            2 ms            2 ms
+Standard Deviation: 						0.562 ms 		0.454 ms 		0.526 ms
+Number of successful found keys: 			-      			449				102543
+Average Time to find a row: 				-				0.639 ms 		0.006 ms
+
+As MAX_NUM_KEYS increases, the average point query time increases beacuse we do a sequential scan
+inside a leaf node to get to the particular record and now, we have almost 4 times more number of records per leaf than before. 
+The advantage of increased fanout is not much prominant since number of records remained the same,
+and the height was not decreased considerably to enhance performance.
+
